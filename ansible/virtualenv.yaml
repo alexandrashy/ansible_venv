@@ -1,0 +1,48 @@
+- name: Setting up EN
+  hosts: localhost
+  remote_user: root
+  tasks:
+    - name: Install Python 3
+      apt:
+        name:
+          - python3
+        state: present
+
+    - name: Check if virtualenv library already installed or not
+      stat:
+        path: /usr/bin/virtualenv
+      register: pip_virtualenv_installed
+    
+    - name: Download Pip-Installer
+      get_url:
+        url: https://bootstrap.pypa.io/pip/get-pip.py
+        dest: /tmp/get-pip.py
+      when: pip_virtualenv_installed.stat.exists == False
+
+    - name: Install pip
+      shell: /usr/bin/python /tmp/get-pip.py
+      when: pip_virtualenv_installed.stat.exists == False
+
+    - name: Install virtualenv module
+      pip:
+        name: virtualenv
+        executable: pip3
+      become: yes
+      become_user: root
+      when: pip_virtualenv_installed.stat.exists == False
+
+    - name: Create Python3-virtual environment folder
+      file:
+        name: /opt/python_venvs/{{file}}
+        state: directory
+    
+    - name: Copy file
+      ansible.builtin.copy:
+        src: /{{source}}
+        dest: /opt/python_venvs/{{file}}
+
+    - name: Create virtualenv
+      ansible.builtin.pip:
+        requirements: /opt/python_venvs/{{file}}/{{file}}.txt
+        virtualenv: /opt/python_venvs/{{file}}
+    
