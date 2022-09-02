@@ -9,6 +9,6 @@
 
 ## Ansible playbook 
     1. Using localhost, installing necessarily packages (Ubuntu 20.04, for github Actions)
-    2. Intalling python, pip, and virtualenv module.
+    2. Installing python, pip, and virtualenv module.
     3. Create a venv folder and copy the file from local machine to remote.
     4. Create virtualenv
